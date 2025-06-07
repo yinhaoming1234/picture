@@ -1,9 +1,14 @@
 package com.yin.picture.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yin.picture.model.dto.user.UserQueryRequest;
 import com.yin.picture.model.entity.User;
 import com.yin.picture.model.vo.user.LoginUserVO;
+import com.yin.picture.model.vo.user.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 /**
 * @author hao
@@ -51,5 +56,11 @@ public interface UserService extends IService<User> {
     boolean userLogout(HttpServletRequest request);
 
 
+    UserVO getUserVO(User user);
 
+    List<UserVO> getUserVOList(List<User> userList);
+
+    QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    String getEncryptPassword(String defaultPassword);
 }
