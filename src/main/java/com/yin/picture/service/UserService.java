@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yin.picture.model.dto.user.UserQueryRequest;
 import com.yin.picture.model.entity.User;
-import com.yin.picture.model.vo.user.LoginUserVO;
-import com.yin.picture.model.vo.user.UserVO;
+import com.yin.picture.model.vo.LoginUserVO;
+import com.yin.picture.model.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;

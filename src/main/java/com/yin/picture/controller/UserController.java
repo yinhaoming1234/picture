@@ -11,8 +11,8 @@ import com.yin.picture.exception.ErrorCode;
 import com.yin.picture.exception.ThrowUtils;
 import com.yin.picture.model.dto.user.*;
 import com.yin.picture.model.entity.User;
-import com.yin.picture.model.vo.user.LoginUserVO;
-import com.yin.picture.model.vo.user.UserVO;
+import com.yin.picture.model.vo.LoginUserVO;
+import com.yin.picture.model.vo.UserVO;
 import com.yin.picture.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +20,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.yin.picture.constant.UserConstant.USER_LOGIN_STATE;
 
 @RestController
 @RequestMapping("/user")
@@ -59,6 +61,18 @@ public class UserController {
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR);
         boolean result = userService.userLogout(request);
         return ResultUtils.success(result);
+    }
+    @PostMapping("/update-self")
+    public BaseResponse<Boolean> updateUser(@RequestBody UpdateSelfRequest updateSelfRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(updateSelfRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        User user = new User();
+        BeanUtils.copyProperties(updateSelfRequest, user);
+        user.setId(loginUser.getId());
+        boolean result = userService.updateById(user);
+        request.getSession().setAttribute(USER_LOGIN_STATE, user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
     }
     /**
      * 创建用户

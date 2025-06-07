@@ -11,8 +11,8 @@ import com.yin.picture.mapper.UserMapper;
 import com.yin.picture.model.dto.user.UserQueryRequest;
 import com.yin.picture.model.entity.User;
 import com.yin.picture.model.enums.UserRoleEnum;
-import com.yin.picture.model.vo.user.LoginUserVO;
-import com.yin.picture.model.vo.user.UserVO;
+import com.yin.picture.model.vo.LoginUserVO;
+import com.yin.picture.model.vo.UserVO;
 import com.yin.picture.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -126,11 +126,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接返回上述结果）
-        long userId = currentUser.getId();
-        currentUser = this.getById(userId);
-        if (currentUser == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
+//        long userId = currentUser.getId();
+//        currentUser = this.getById(userId);
+//        if (currentUser == null) {
+//            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+//        }
         return currentUser;
     }
     @Override
