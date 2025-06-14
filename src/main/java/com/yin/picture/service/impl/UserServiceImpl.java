@@ -6,7 +6,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yin.picture.common.CacheUtil;
+import com.yin.picture.cache.CacheUtil;
 import com.yin.picture.exception.BusinessException;
 import com.yin.picture.exception.ErrorCode;
 import com.yin.picture.mapper.UserMapper;

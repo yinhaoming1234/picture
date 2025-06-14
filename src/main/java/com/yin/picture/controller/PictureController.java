@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yin.picture.Category.PictureTagCategory;
 import com.yin.picture.annotation.AuthCheck;
 import com.yin.picture.common.BaseResponse;
-import com.yin.picture.common.CacheUtil;
+import com.yin.picture.cache.CacheUtil;
 import com.yin.picture.common.DeleteRequest;
 import com.yin.picture.common.ResultUtils;
 import com.yin.picture.constant.UserConstant;

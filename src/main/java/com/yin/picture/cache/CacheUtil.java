@@ -1,4 +1,4 @@
-package com.yin.picture.common;
+package com.yin.picture.cache;
 
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.json.JSONUtil;
