@@ -41,3 +41,31 @@ create table if not exists picture
     INDEX idx_userId (userId)              -- 提升基于用户 ID 的查询性能
 ) comment '图片' collate = utf8mb4_unicode_ci;
 
+ALTER TABLE picture
+    -- 添加新列
+    ADD COLUMN reviewStatus INT DEFAULT 0 NOT NULL COMMENT '审核状态：0-待审核; 1-通过; 2-拒绝',
+    ADD COLUMN reviewMessage VARCHAR(512) NULL COMMENT '审核信息',
+    ADD COLUMN reviewerId BIGINT NULL COMMENT '审核人 ID',
+    ADD COLUMN reviewTime DATETIME NULL COMMENT '审核时间';
+
+-- 创建基于 reviewStatus 列的索引
+CREATE INDEX idx_reviewStatus ON picture (reviewStatus);
+ALTER TABLE picture
+    -- 添加新列
+    ADD COLUMN thumbnailUrl varchar(512) NULL COMMENT '缩略图 url';
+
+-- 添加点赞总数列
+ALTER TABLE picture
+    ADD COLUMN thumbCount INT DEFAULT 0 NOT NULL COMMENT '点赞数';
+
+-- 点赞记录表
+create table if not exists thumb
+(
+    id         bigint auto_increment primary key,
+    userId     bigint                             not null,
+    pictureId     bigint                             not null,
+    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+);
+create unique index idx_userId_pictureId on thumb (userId, pictureId);
+
+

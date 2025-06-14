@@ -1,10 +1,12 @@
 package com.yin.picture.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yin.picture.common.CacheUtil;
 import com.yin.picture.exception.BusinessException;
 import com.yin.picture.exception.ErrorCode;
 import com.yin.picture.mapper.UserMapper;
@@ -15,6 +17,7 @@ import com.yin.picture.model.vo.LoginUserVO;
 import com.yin.picture.model.vo.UserVO;
 import com.yin.picture.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,8 +36,12 @@ import static com.yin.picture.constant.UserConstant.USER_LOGIN_STATE;
 */
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
+    private final CacheUtil cacheUtil;
+
+
     @Override
     public String getEncryptPassword(String userPassword) {
         // 盐值，混淆密码
@@ -125,12 +132,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
+
         // 从数据库查询（追求性能的话可以注释，直接返回上述结果）
-//        long userId = currentUser.getId();
-//        currentUser = this.getById(userId);
-//        if (currentUser == null) {
-//            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-//        }
+        long userId = currentUser.getId();
+        // 构建缓存 key
+        String cacheKey = "picture:getLoginUser:id" + userId;
+        currentUser = cacheUtil.get(cacheKey, userId, this::getById, new TypeReference<User>(){});
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        request.getSession().setAttribute(USER_LOGIN_STATE,currentUser);
         return currentUser;
     }
     @Override
@@ -155,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public List<UserVO> getUserVOList(List<User> userList) {
+    public List<UserVO> getUserVOListByUser(List<User> userList) {
         if (CollUtil.isEmpty(userList)) {
             return new ArrayList<>();
         }

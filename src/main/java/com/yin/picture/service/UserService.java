@@ -58,7 +58,7 @@ public interface UserService extends IService<User> {
 
     UserVO getUserVO(User user);
 
-    List<UserVO> getUserVOList(List<User> userList);
+    List<UserVO> getUserVOListByUser(List<User> userList);
 
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 

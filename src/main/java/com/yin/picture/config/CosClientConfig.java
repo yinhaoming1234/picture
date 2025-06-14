@@ -48,5 +48,5 @@ public class CosClientConfig {
         ClientConfig clientConfig = new ClientConfig(new Region(region));
         // 生成cos客户端  
         return new COSClient(cred, clientConfig);  
-    }  
+    }
 }

@@ -1,7 +1,10 @@
 package com.yin.picture.mapper;
 
-import com.yin.picture.model.entity.Picture;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yin.picture.model.entity.Picture;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Map;
 
 /**
 * @author hao
@@ -10,6 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.yin.picture.model.entity.Picture
 */
 public interface PictureMapper extends BaseMapper<Picture> {
+    void batchUpdateThumbCount(@Param("countMap") Map<Long, Long> countMap);
 
 }
 

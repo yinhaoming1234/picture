@@ -1,12 +1,15 @@
 package com.yin.picture.manager;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.model.ciModel.persistence.CIObject;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
+import com.qcloud.cos.model.ciModel.persistence.ProcessResults;
 import com.yin.picture.config.CosClientConfig;
 import com.yin.picture.exception.BusinessException;
 import com.yin.picture.exception.ErrorCode;
@@ -49,31 +52,61 @@ public class FileManager {
                 FileUtil.getSuffix(originFilename));
         String uploadPath = String.format("/%s/%s", uploadPathPrefix, uploadFilename);
         try(InputStream inputStream = multipartFile.getInputStream()) {
-            // 创建临时文件
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(multipartFile.getContentType());
             objectMetadata.setContentLength(multipartFile.getSize());
             // 上传图片
             PutObjectResult putObjectResult = cosManager.putPictureObject(uploadPath, inputStream, objectMetadata);
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
-            // 封装返回结果
-            UploadPictureResult uploadPictureResult = new UploadPictureResult();
-            int picWidth = imageInfo.getWidth();
-            int picHeight = imageInfo.getHeight();
-            double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
-            uploadPictureResult.setPicName(FileUtil.mainName(originFilename));
-            uploadPictureResult.setPicWidth(picWidth);
-            uploadPictureResult.setPicHeight(picHeight);
-            uploadPictureResult.setPicScale(picScale);
-            uploadPictureResult.setPicFormat(imageInfo.getFormat());
-            uploadPictureResult.setPicSize(multipartFile.getSize());
-            uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
-            return uploadPictureResult;
+            ProcessResults processResults = putObjectResult.getCiUploadResult().getProcessResults();
+            List<CIObject> objectList = processResults.getObjectList();
+            if (CollUtil.isNotEmpty(objectList)) {
+                CIObject compressedCiObject = objectList.get(0);
+                CIObject thumbnailCiObject = objectList.get(1);
+                cosManager.deleteObject(uploadPath);
+// 封装压缩图返回结果
+                return buildResult(originFilename, compressedCiObject,thumbnailCiObject);
+            }
+// 封装原图返回结果
+            return buildResult(originFilename,multipartFile,  imageInfo,uploadPath);
         } catch (Exception e) {
             log.error("图片上传到对象存储失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
         }
     }
+    private UploadPictureResult buildResult(String originFilename, CIObject compressedCiObject,CIObject thumbnailCiObject) {
+        UploadPictureResult uploadPictureResult = new UploadPictureResult();
+        int picWidth = compressedCiObject.getWidth();
+        int picHeight = compressedCiObject.getHeight();
+        double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
+        uploadPictureResult.setPicName(FileUtil.mainName(originFilename));
+        uploadPictureResult.setPicWidth(picWidth);
+        uploadPictureResult.setPicHeight(picHeight);
+        uploadPictureResult.setPicScale(picScale);
+        uploadPictureResult.setPicFormat(compressedCiObject.getFormat());
+        uploadPictureResult.setPicSize(compressedCiObject.getSize().longValue());
+        // 设置图片为压缩后的地址
+        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + compressedCiObject.getKey());
+        uploadPictureResult.setThumbnailUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
+        return uploadPictureResult;
+    }
+    private UploadPictureResult buildResult(String originFilename, MultipartFile multipartFile,ImageInfo imageInfo,String uploadPath) {
+        // 封装返回结果
+        UploadPictureResult uploadPictureResult = new UploadPictureResult();
+        int picWidth = imageInfo.getWidth();
+        int picHeight = imageInfo.getHeight();
+        double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
+        uploadPictureResult.setPicName(FileUtil.mainName(originFilename));
+        uploadPictureResult.setPicWidth(picWidth);
+        uploadPictureResult.setPicHeight(picHeight);
+        uploadPictureResult.setPicScale(picScale);
+        uploadPictureResult.setPicFormat(imageInfo.getFormat());
+        uploadPictureResult.setPicSize(multipartFile.getSize());
+        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+        return uploadPictureResult;
+    }
+
+
 
     /**
      * 校验文件

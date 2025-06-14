@@ -23,9 +23,28 @@
             <result property="isDelete" column="isDelete" />
     </resultMap>
 
+    <update id="batchUpdateThumbCount">
+        UPDATE picture
+        SET thumbCount = thumbCount + CASE id
+        <foreach collection="countMap.entrySet()" item="value" index="key">
+            WHEN #{key} THEN #{value}
+        </foreach>
+        END
+        WHERE id IN
+        <foreach collection="countMap.keySet()" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <!-- ... -->
     <sql id="Base_Column_List">
-        id,url,name,introduction,category,tags,
-        picSize,picWidth,picHeight,picScale,picFormat,
-        userId,createTime,editTime,updateTime,isDelete
+        id,url,thumbnailUrl,name,
+    introduction,category,tags,
+    picSize,picWidth,picHeight,
+    picScale,picFormat,userId,
+    createTime,editTime,updateTime,
+    isDelete
     </sql>
+
 </mapper>

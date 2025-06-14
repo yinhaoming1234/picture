@@ -49,6 +49,7 @@ public class UserController {
         String userPassword = userLoginRequest.getUserPassword();
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(loginUserVO);
+
     }
 
     @GetMapping("/get/login")
@@ -157,7 +158,7 @@ public class UserController {
         Page<User> userPage = userService.page(new Page<>(current, pageSize),
                 userService.getQueryWrapper(userQueryRequest));
         Page<UserVO> userVOPage = new Page<>(current, pageSize, userPage.getTotal());
-        List<UserVO> userVOList = userService.getUserVOList(userPage.getRecords());
+        List<UserVO> userVOList = userService.getUserVOListByUser(userPage.getRecords());
         userVOPage.setRecords(userVOList);
         return ResultUtils.success(userVOPage);
     }
