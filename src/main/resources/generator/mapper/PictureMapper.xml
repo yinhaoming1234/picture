@@ -44,7 +44,7 @@
     picSize,picWidth,picHeight,
     picScale,picFormat,userId,
     createTime,editTime,updateTime,
-    isDelete
+    isDelete,spaceId;
     </sql>
 
 </mapper>

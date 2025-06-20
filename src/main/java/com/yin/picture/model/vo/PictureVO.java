@@ -98,6 +98,11 @@ public class PictureVO implements Serializable {
      * 点赞状态
      */
     private Boolean hasThumb;
+    /**
+     * 空间 id
+     */
+    private Long spaceId;
+
 
 
     /**  

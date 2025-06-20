@@ -18,7 +18,7 @@ import java.util.Set;
  * 定时将 Redis 中的临时点赞数据同步到数据库的补偿措施  
  *  
  */  
-@Component
+//@Component
 @Slf4j
 @Async
 public class SyncThumb2DBCompensatoryJob {  

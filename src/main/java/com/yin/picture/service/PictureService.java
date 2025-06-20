@@ -3,9 +3,9 @@ package com.yin.picture.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yin.picture.model.dto.picture.PictureQueryRequest;
-import com.yin.picture.model.dto.picture.PictureReviewRequest;
-import com.yin.picture.model.dto.picture.PictureUploadRequest;
+import com.yin.picture.api.CreateOutPaintingTaskResponse;
+import com.yin.picture.config.PictureUploadByBatchRequest;
+import com.yin.picture.model.dto.picture.*;
 import com.yin.picture.model.entity.Picture;
 import com.yin.picture.model.entity.User;
 import com.yin.picture.model.vo.PictureVO;
@@ -27,7 +27,7 @@ public interface PictureService extends IService<Picture> {
      * @param loginUser
      * @return
      */
-    PictureVO uploadPicture(MultipartFile multipartFile,
+    PictureVO uploadPicture(Object multipartFile,
                             PictureUploadRequest pictureUploadRequest,
                             User loginUser);
 
@@ -50,4 +50,23 @@ public interface PictureService extends IService<Picture> {
 
 
     Page<Picture> getPicturePage(PictureQueryRequest pictureQueryRequest);
+    /**
+     * 批量抓取和创建图片
+     *
+     * @param pictureUploadByBatchRequest
+     * @param loginUser
+     * @return 成功创建的图片数
+     */
+    Integer uploadPictureByBatch(
+            PictureUploadByBatchRequest pictureUploadByBatchRequest,
+            User loginUser
+    );
+
+    void checkPictureAuth(User loginUser, Picture picture);
+
+    void deletePicture(long pictureId, User loginUser);
+
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
+
+    CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
 }

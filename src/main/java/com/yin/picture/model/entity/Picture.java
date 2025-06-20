@@ -116,6 +116,11 @@ public class Picture implements Serializable {
      */
     private Integer thumbCount;
     /**
+     * 空间 id
+     */
+    private Long spaceId;
+
+    /**
      *
      * 是否删除
      */

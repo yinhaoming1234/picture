@@ -56,11 +56,13 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
 
+
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.38</version>
+            <artifactId>hutool-all</artifactId>  <!-- 注意 artifactId 变化 -->
+            <version>5.8.38</version> <!-- 使用一个较新的、支持 jakarta 的 5.x 版本 -->
         </dependency>
+
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
@@ -116,7 +118,29 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-pulsar</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.27.1</version> <!-- 建议使用最新稳定版 -->
+        </dependency>
 
+        <!-- Sa-Token 权限认证 -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <version>1.39.0</version>
+        </dependency>
+        <!-- Sa-Token 整合 Redis （使用 jackson 序列化方式） -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+            <version>1.39.0</version>
+        </dependency>
+        <!-- 提供Redis连接池 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
 
 
 
